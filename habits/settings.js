@@ -2,12 +2,13 @@
  * Settings sheet (Settings -> Modules -> Habits): which task categories count
  * as habits. Contract: export render(container, { section, user, query }).
  *
- * Uses the app's own settings classes (titled section, one rounded group of
- * rows, switches that save when flipped, footer text). The markup is built here
- * because the app's settings components are no longer importable by modules.
+ * Built from the same pieces as the app's own settings pages: a titled
+ * section, one rounded group of rows, switches that save the moment they are
+ * flipped, and a footer line on the page background. No CSS of its own.
  */
 
 import { t } from '/i18n.js';
+import { createToggleRow } from '/settings/components.js';
 import { el } from './lib/dom.js';
 import {
   fetchCategories, loadCategoryKeys, saveCategoryKeys, createCategory,
@@ -48,11 +49,9 @@ export async function render(container, { section } = {}) {
     const hasDefault = categories.some((cat) => cat.key === DEFAULT_CATEGORY_KEYS[0]);
 
     const rows = categories.map((cat) => {
-      const input = el('input', { type: 'checkbox', role: 'switch', 'data-instant-save': '' });
-      input.checked = selected.has(cat.key);
-      const row = el('label', { class: 'toggle-row toggle-row--switch' },
-        el('span', { class: 'toggle-row__label' }, cat.label),
-        el('span', { class: 'toggle' }, input, el('span', { class: 'toggle__track', 'aria-hidden': 'true' })));
+      const row = createToggleRow({ label: cat.label, checked: selected.has(cat.key), control: 'switch' });
+      const input = row.querySelector('input');
+      input.dataset.instantSave = '';
       input.addEventListener('change', async () => {
         const previous = new Set(selected);
         if (input.checked) selected.add(cat.key);

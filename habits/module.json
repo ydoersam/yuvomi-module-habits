@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "habits",
   "name": "Habits",
-  "version": "2.1.0",
+  "version": "2.0.0",
   "description": "Weekly habit matrix built on the Tasks module: recurring tasks in a chosen category become habits you can tick off from the start page.",
   "entry": "index.js",
   "style": "style.css",
