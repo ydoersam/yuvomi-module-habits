@@ -24,11 +24,10 @@
 import { api } from '/api.js';
 import { t, getLocale, getWeekStart } from '/i18n.js';
 import {
-  todayKey, addLocalDays, startOfLocalWeekKey, parseLocalDateKey, weekStartIndex,
-} from '/utils/date.js';
-import { zonedDateKey } from '/utils/timezone.js';
+  todayKey, addLocalDays, startOfLocalWeekKey, parseLocalDateKey, weekStartIndex, zonedDateKey,
+} from './dates.js';
 import { el, checkIcon } from './dom.js';
-import { makeSortable } from '/utils/sortable.js';
+import { makeReorderable } from './reorder.js';
 import { loadCategoryKeys, loadOrder, saveOrder, normalizeOrder, fetchCategories } from './settings.js';
 
 const MAX_COMPLETION_PAGES = 6;
@@ -462,9 +461,7 @@ export async function mountMatrix(mount, { categories = null, order: givenOrder 
       }
     }
 
-    makeSortable(tbody, { handle: '[data-sortable-handle]', draggable: 'tr[data-series]', onEnd: commit })
-      .then((instance) => { if (sig.aborted) instance?.destroy(); })
-      .catch(() => { /* keyboard reordering still works */ });
+    makeReorderable(tbody, { handle: '[data-sortable-handle]', row: 'tr[data-series]', onEnd: commit, signal: sig });
 
     tbody.addEventListener('keydown', (event) => {
       if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
@@ -482,30 +479,8 @@ export async function mountMatrix(mount, { categories = null, order: givenOrder 
     }, { signal: sig });
   }
 
-  // The title opens the same detail panel (with its edit form) as the Tasks
-  // page. If core's tasks page cannot be loaded or refuses, the link's own
-  // href takes over and the router jumps to the task in the Tasks view.
-  let fallingBack = false;
+  // The habit name is a plain link (/tasks?open=<id>); the router opens the task.
   mount.addEventListener('click', async (event) => {
-    const link = event.target.closest('a[data-habit-open]');
-    if (link) {
-      if (fallingBack || event.metaKey || event.ctrlKey || event.shiftKey || event.button) return;
-      event.preventDefault();
-      event.stopPropagation();
-      try {
-        const { openTaskById } = await import('/pages/tasks.js');
-        await openTaskById(link.dataset.habitOpen, {
-          user,
-          container: mount,
-          onChanged: () => draw().catch((err) => showError(mount, err)),
-        });
-      } catch {
-        fallingBack = true;
-        link.click();
-        fallingBack = false;
-      }
-      return;
-    }
     const btn = event.target.closest('button[data-habit-done], button[data-habit-undo]');
     if (!btn || busy) return;
     busy = true;

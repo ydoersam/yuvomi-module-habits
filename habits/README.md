@@ -515,3 +515,22 @@ the shown weeks. If a series has no open instance left for you (the follow-up
 was handed to someone else by rotation, the series ended, or it was a one-off
 task), its last completed task is loaded and shown as a row with its green
 marks. Such a row is display-only: it cannot be ticked.
+
+---
+
+## Update for Yuvomi 2.88: facades only
+
+Yuvomi 2.88 ships the web app built. Since then a module may import **only**
+`/api.js`, `/i18n.js` and `/utils/html.js`; every other core file has a hashed
+name and no importable address, so a module that imported them failed to load.
+Version 2.1.0 imports nothing else. What changed because of that:
+
+- Date helpers and the drag-to-reorder code now live inside the module
+  (`lib/dates.js`, `lib/reorder.js`; pointer events plus arrow keys on the same
+  grip handle). Day keys use the browser's time zone, not the household's.
+- The page and the settings sheet are built from the app's CSS classes, as
+  MODULES.md now shows.
+- The "New task" button and the side panel opened from a habit name are gone:
+  they used the Tasks page's own code, which a module can no longer reach.
+  The habit name is a link to `/tasks?open=<id>`, which opens that task in the
+  Tasks view. Create new habits in the Tasks view, in a habit category.
