@@ -1,0 +1,54 @@
+{
+  "manifestVersion": 1,
+  "id": "habits",
+  "name": "Habits",
+  "version": "2.0.0",
+  "description": "Weekly habit matrix built on the Tasks module: recurring tasks in a chosen category become habits you can tick off from the start page.",
+  "entry": "index.js",
+  "style": "style.css",
+  "icon": "repeat",
+  "accent": "#0E9F6E",
+  "i18n": { "defaultLocale": "en" },
+  "menu": {
+    "show": true,
+    "label": "Habits",
+    "labelKey": "menu",
+    "icon": "repeat",
+    "order": 40
+  },
+  "settings": {
+    "entry": "settings.js",
+    "sections": ["mine"],
+    "labelKey": "settings.title"
+  },
+  "page": {
+    "composition": "data",
+    "width": "content",
+    "navigation": "standard",
+    "responsive": "standard"
+  },
+  "capabilities": {
+    "permissions": {
+      "module": { "label": "Habits", "labelKey": "module", "icon": "repeat" },
+      "widgets": [{ "id": "week", "label": "Habit week" }]
+    },
+    "widgets": [
+      {
+        "id": "week",
+        "entry": "widgets/week.js",
+        "label": "Habit week",
+        "labelKey": "widgets.week",
+        "icon": "repeat",
+        "defaultSize": "4x2",
+        "defaultVisible": true,
+        "optionsSchema": {
+          "categories": {
+            "type": "array",
+            "title": "Habit categories",
+            "titleKey": "options.categories"
+          }
+        }
+      }
+    ]
+  }
+}

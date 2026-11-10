@@ -1,0 +1,169 @@
+/* Habits module. Uses only core design tokens (see public/styles/tokens.css). */
+
+.habits { min-width: 0; }
+
+.habits-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.habits-scroll { overflow-x: auto; }
+
+.habits-grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  min-width: 340px;
+}
+
+.habits-name-head { width: 34%; }
+.habits-total-head { width: 2.75rem; }
+
+.habits-day {
+  padding: 0 0 var(--space-1, 4px);
+  font-weight: 500;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+.habits-day__name { display: block; font-size: var(--text-xs, 0.75rem); text-transform: uppercase; letter-spacing: 0.04em; }
+.habits-day__num  { display: block; font-size: var(--text-sm, 0.875rem); font-variant-numeric: tabular-nums; }
+.habits-day--today { color: var(--color-accent); }
+.habits-day--today .habits-day__num { font-weight: 700; }
+
+.habits-name {
+  padding: var(--space-1, 4px) var(--space-2, 8px) var(--space-1, 4px) 0;
+  font-weight: 500;
+  text-align: start;
+  font-size: var(--text-sm, 0.875rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+.habits-cell, .habits-total {
+  padding: var(--space-1, 4px) 0;
+  text-align: center;
+  vertical-align: middle;
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+.habits-cell--today { background: var(--color-accent-light); }
+
+.habits-total {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Today's check button: a real, keyboard-reachable control. */
+.habits-check {
+  display: inline-grid;
+  place-items: center;
+  /* Same footprint as .habits-mark, so today's cell lines up with the rest. */
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-on-accent);
+  cursor: pointer;
+  /* Enlarge the hit area to 44px without growing the visual. */
+  position: relative;
+}
+.habits-check::after { content: ''; position: absolute; inset: -6px; }
+.habits-check:hover { border-color: var(--color-accent); }
+.habits-check:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.habits-check:disabled { opacity: 0.6; cursor: progress; }
+.habits-check--done { background: var(--color-success); border-color: var(--color-success); }
+.habits-check i, .habits-check svg,
+.habits-mark i, .habits-mark svg { width: 1rem; height: 1rem; stroke-width: 3; }
+
+/* Read-only marks for the other days. */
+.habits-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  box-sizing: border-box;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* A day window (colspan > 1) is one pill across its days. */
+.habits-cell[colspan] .habits-mark,
+.habits-cell[colspan] .habits-check {
+  width: calc(100% - var(--space-2, 8px));
+  border-radius: 999px;
+}
+.habits-cell[colspan] .habits-mark--off { width: 0.5rem; border-radius: 50%; }
+.habits-mark--done   { background: var(--color-success); color: var(--color-text-on-accent); }
+.habits-mark--missed { border: 2px solid var(--color-border-strong); }
+.habits-mark--upcoming { border: 2px dashed var(--color-border); }
+.habits-mark--off {
+  width: 0.5rem; height: 0.5rem;
+  background: var(--color-border);
+}
+
+/* Keep the "not scheduled" dot small even where size rules above are more specific. */
+.habits--page .habits-mark--off { width: 0.5rem; height: 0.5rem; }
+
+.habits-empty { padding: var(--space-4, 16px) 0; color: var(--color-text-secondary); }
+.habits-empty__title { margin: 0 0 var(--space-1, 4px); font-weight: 600; color: var(--color-text-primary); }
+.habits-empty__hint { margin: 0; font-size: var(--text-sm, 0.875rem); }
+.habits-empty__link { color: var(--color-accent); }
+
+.habits-error { margin: 0 0 var(--space-2, 8px); color: var(--color-danger, #b3261e); font-size: var(--text-sm, 0.875rem); }
+
+.habits--page .habits-grid { min-width: 480px; }
+.habits--page .habits-name { font-size: var(--text-base, 1rem); }
+.habits--page .habits-check,
+.habits--page .habits-mark { width: 2rem; height: 2rem; }
+.habits--page .habits-cell[colspan] .habits-check,
+.habits--page .habits-cell[colspan] .habits-mark { width: calc(100% - var(--space-2, 8px)); }
+.habits--page .habits-cell[colspan] .habits-mark--off { width: 0.5rem; height: 0.5rem; }
+
+/* Drag handle column (page only). The handle itself is the core
+   `.row-action.list-row__drag` button, as on the dashboard. */
+.habits-drag-head { width: 2rem; }
+.habits-drag-cell {
+  padding: 0;
+  vertical-align: middle;
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+.habits-drag-cell .habits-drag {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  min-width: 2rem;
+  padding-inline: 0;
+  color: var(--color-text-tertiary);
+}
+.habits-grid tr.sortable-ghost { opacity: 0.4; }
+.habits-grid tr.sortable-chosen { background: var(--color-accent-light); }
+
+/* A habit that is complete for the week stays in the matrix and says so. */
+.habits-row--complete .habits-name { color: var(--color-success); }
+.habits-total__done {
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--color-success);
+  color: var(--color-text-on-accent);
+}
+.habits-total__done svg { width: 0.8rem; height: 0.8rem; stroke-width: 3; }
+.habits-celebrate {
+  margin: var(--space-3, 12px) 0 0;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+/* The habit name is a link to its task. */
+.habits-name__link { color: inherit; text-decoration: none; }
+.habits-name__link:hover { color: var(--color-accent); text-decoration: underline; }
+.habits-name__link:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 2px; }
